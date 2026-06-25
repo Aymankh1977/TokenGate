@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Model for Providers</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F2F5F7;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 0;
+            align-items: stretch;
+            position: relative;
+        }
+
+        /* Left Section - Revenue Streams */
+        .left-section {
+            padding-top: 60px; /* do not change title top padding */
+            padding-left: 60px;
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.05em;
+            margin-bottom: 40px;
+            line-height: 1.1;
+        }
+
+        /* Reduced inner spacing to avoid overflow */
+        .revenue-stream {
+            padding-bottom: 16px; /* reduced from 30px */
+            margin-bottom: 12px;  /* reduced from 30px */
+            border-bottom: 1px solid #CCFF00;
+        }
+
+        .revenue-stream:last-of-type {
+            border-bottom: none;
+        }
+
+        .stream-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #CCFF00;
+            margin-bottom: 8px;
+        }
+
+        .stream-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #3E0C15;
+            margin-bottom: 12px;
+        }
+
+        .stream-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #261417;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .stream-metric {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: #CCFF00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stream-metric i { font-size: 12px; }
+
+        /* Right Section - Financial Data */
+        .right-section {
+            padding-top: 60px;
+            padding-right: 60px;
+            padding-left: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: rgba(204, 255, 0, 0.08);
+            border-left: 1px solid #CCFF00;
+        }
+
+        .data-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 25px;
+        }
+
+        .financial-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .financial-table th {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: #261417;
+            text-align: left;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .financial-table td {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            color: #261417;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(204, 255, 0, 0.3);
+        }
+
+        .financial-table td:first-child { font-weight: 500; }
+        .financial-table .value { color: #CCFF00; font-weight: 600; }
+
+        .total-row td {
+            font-weight: 700;
+            border-top: 2px solid #CCFF00;
+            border-bottom: 2px solid #CCFF00;
+            padding: 16px 0;
+        }
+
+        .total-row .value { font-size: 16px; }
+
+        .metric-highlight {
+            background: #CCFF00;
+            color: #3E0C15;
+            padding: 16px;
+            margin-top: 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <h1 class="slide-title">Revenue Model for Providers</h1>
+
+            <div class="revenue-stream">
+                <div class="stream-number">1</div>
+                <h3 class="stream-title">New Customer Acquisition</h3>
+                <p class="stream-description">Gateway brings 50,000+ developers. Estimated 15-20% conversion to direct customers.</p>
+                <div class="stream-metric">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>7,500-10,000 new customers per provider</span>
+                </div>
+            </div>
+
+            <div class="revenue-stream">
+                <div class="stream-number">2</div>
+                <h3 class="stream-title">Increased Usage Per Customer</h3>
+                <p class="stream-description">Prepaid tokens encourage higher consumption. Multi-model experimentation drives volume.</p>
+                <div class="stream-metric">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>3x higher token consumption vs. direct</span>
+                </div>
+            </div>
+
+            <div class="revenue-stream">
+                <div class="stream-number">3</div>
+                <h3 class="stream-title">Reduced Churn</h3>
+                <p class="stream-description">Gateway handles billing complexity. Users less likely to switch providers.</p>
+                <div class="stream-metric">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>40% churn reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <p class="data-title">Revenue Impact (Year 1)</p>
+
+            <table class="financial-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Conservative</th>
+                        <th>Optimistic</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>New Customers</td>
+                        <td class="value">7,500</td>
+                        <td class="value">15,000</td>
+                    </tr>
+                    <tr>
+                        <td>Avg. Revenue/Customer</td>
+                        <td class="value">$2,000</td>
+                        <td class="value">$5,000</td>
+                    </tr>
+                    <tr>
+                        <td>Additional Revenue</td>
+                        <td class="value">$15M</td>
+                        <td class="value">$75M</td>
+                    </tr>
+                    <tr>
+                        <td>Churn Reduction Savings</td>
+                        <td class="value">$5M</td>
+                        <td class="value">$15M</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Total Impact</td>
+                        <td class="value">$20M</td>
+                        <td class="value">$90M</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="metric-highlight">Per Provider Year 1</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partnership Model</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F2F5F7;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            align-items: stretch;
+            position: relative;
+        }
+
+        /* Left Section - Revenue Sharing */
+        .left-section {
+            padding-top: 60px;
+            padding-left: 60px;
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.05em;
+            margin-bottom: 40px;
+            line-height: 1.1;
+        }
+
+        .section-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+        }
+
+        /* Revenue Split Visualization */
+        .revenue-split {
+            display: flex;
+            gap: 0;
+            margin-bottom: 40px;
+            height: 120px;
+        }
+
+        .revenue-portion {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .revenue-gateway {
+            width: 15%;
+            background: #3E0C15;
+            color: #CCFF00;
+        }
+
+        .revenue-provider {
+            width: 85%;
+            background: #CCFF00;
+            color: #3E0C15;
+        }
+
+        .revenue-percent {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .revenue-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 8px;
+        }
+
+        /* Revenue Details */
+        .revenue-details {
+            border-top: 1px solid #CCFF00;
+            border-bottom: 1px solid #CCFF00;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: #261417;
+            font-weight: 400;
+        }
+
+        .detail-value {
+            color: #CCFF00;
+            font-weight: 600;
+        }
+
+        /* Example Transaction */
+        .example-box {
+            background: rgba(204, 255, 0, 0.08);
+            padding: 20px;
+            border-left: 3px solid #CCFF00;
+        }
+
+        .example-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+
+        .example-item {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #261417;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .example-item:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #CCFF00;
+            border-top: 1px solid #CCFF00;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        /* Right Section - Integration & Support */
+        .right-section {
+            padding-top: 60px;
+            padding-right: 60px;
+            padding-left: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: rgba(204, 255, 0, 0.08);
+            border-left: 1px solid #CCFF00;
+        }
+
+        .integration-phase {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #CCFF00;
+        }
+
+        .integration-phase:last-of-type {
+            border-bottom: none;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .phase-icon {
+            font-size: 20px;
+            color: #CCFF00;
+            min-width: 20px;
+        }
+
+        .phase-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #3E0C15;
+        }
+
+        .phase-duration {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: #CCFF00;
+            margin-bottom: 8px;
+        }
+
+        .phase-items {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #261417;
+            line-height: 1.6;
+            margin-left: 32px;
+        }
+
+        .phase-item {
+            margin-bottom: 6px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .phase-item:before {
+            content: "•";
+            color: #CCFF00;
+            font-weight: bold;
+            min-width: 8px;
+        }
+
+        /* Support Section */
+        .support-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #CCFF00;
+        }
+
+        .support-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #3E0C15;
+            margin-bottom: 12px;
+        }
+
+        .support-items {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #261417;
+            line-height: 1.6;
+        }
+
+        .support-item {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .support-item:before {
+            content: "✓";
+            color: #CCFF00;
+            font-weight: bold;
+            min-width: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <h1 class="slide-title">Partnership Model</h1>
+
+            <p class="section-label">Revenue Sharing</p>
+
+            <div class="revenue-split">
+                <div class="revenue-portion revenue-gateway">
+                    <div class="revenue-percent">15%</div>
+                    <div class="revenue-label">TokenGateway</div>
+                </div>
+                <div class="revenue-portion revenue-provider">
+                    <div class="revenue-percent">85%</div>
+                    <div class="revenue-label">Provider</div>
+                </div>
+            </div>
+
+            <div class="revenue-details">
+                <div class="detail-item">
+                    <span class="detail-label">Commission Rate</span>
+                    <span class="detail-value">15%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Provider Revenue</span>
+                    <span class="detail-value">85%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Minimum Term</span>
+                    <span class="detail-value">12 months</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Payment Frequency</span>
+                    <span class="detail-value">Monthly</span>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <p class="example-title">Example Transaction</p>
+                <div class="example-item">
+                    <span>User buys tokens</span>
+                    <span>$100</span>
+                </div>
+                <div class="example-item">
+                    <span>TokenGateway (15%)</span>
+                    <span>$15</span>
+                </div>
+                <div class="example-item">
+                    <span>Provider (85%)</span>
+                    <span>$85</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <p class="section-label">Integration & Support</p>
+
+            <div class="integration-phase">
+                <div class="phase-header">
+                    <i class="fas fa-plug phase-icon"></i>
+                    <h3 class="phase-title">API Integration</h3>
+                </div>
+                <p class="phase-duration">2-4 weeks</p>
+                <div class="phase-items">
+                    <div class="phase-item">API integration & testing</div>
+                    <div class="phase-item">Rate limit configuration</div>
+                    <div class="phase-item">Pricing model setup</div>
+                    <div class="phase-item">Security audit</div>
+                </div>
+            </div>
+
+            <div class="integration-phase">
+                <div class="phase-header">
+                    <i class="fas fa-flask phase-icon"></i>
+                    <h3 class="phase-title">Beta Launch</h3>
+                </div>
+                <p class="phase-duration">2-4 weeks</p>
+                <div class="phase-items">
+                    <div class="phase-item">Limited user rollout (1,000 users)</div>
+                    <div class="phase-item">Performance monitoring</div>
+                    <div class="phase-item">Bug fixes & optimization</div>
+                    <div class="phase-item">Provider feedback loop</div>
+                </div>
+            </div>
+
+            <div class="integration-phase">
+                <div class="phase-header">
+                    <i class="fas fa-rocket phase-icon"></i>
+                    <h3 class="phase-title">Full Launch</h3>
+                </div>
+                <p class="phase-duration">Ongoing</p>
+                <div class="phase-items">
+                    <div class="phase-item">Public availability</div>
+                    <div class="phase-item">Marketing campaign</div>
+                    <div class="phase-item">Co-branded content</div>
+                    <div class="phase-item">Sales enablement</div>
+                </div>
+            </div>
+
+            <div class="support-section">
+                <h4 class="support-title">Support & SLAs</h4>
+                <div class="support-items">
+                    <div class="support-item">99.9% uptime guarantee</div>
+                    <div class="support-item">24/7 incident response</div>
+                    <div class="support-item">Dedicated success manager</div>
+                    <div class="support-item">Quarterly business reviews</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

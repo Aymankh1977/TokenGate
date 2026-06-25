@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Problem We Solve</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F0F4F8;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 0;
+            align-items: stretch;
+            position: relative;
+        }
+
+        /* Left Section - Content */
+        .left-section {
+            padding-top: 60px;
+            padding-left: 60px;
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: #1E40AF;
+            letter-spacing: -0.05em;
+            margin-bottom: 50px;
+            line-height: 1.1;
+        }
+
+        .section {
+            padding-bottom: 40px;
+            border-bottom: 1px solid #FDB913;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #FDB913;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+        }
+
+        .section-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .pain-point {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .pain-icon {
+            font-size: 24px;
+            color: #1E40AF;
+            min-width: 24px;
+            margin-top: 2px;
+        }
+
+        .pain-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: #1F2937;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            color: #FDB913;
+            font-weight: 600;
+        }
+
+        /* Right Section - Visual */
+        .right-section {
+            padding-top: 60px;
+            padding-right: 60px;
+            padding-left: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background: rgba(253, 185, 19, 0.08);
+            border-left: 1px solid #FDB913;
+        }
+
+        .visual-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #FDB913;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 30px;
+            align-self: flex-start;
+        }
+
+        .fragmentation-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .api-provider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-left: 3px solid #FDB913;
+        }
+
+        .api-icon {
+            font-size: 20px;
+            color: #1E40AF;
+            min-width: 20px;
+        }
+
+        .api-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1F2937;
+        }
+
+        .api-key-badge {
+            margin-left: auto;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            color: #FDB913;
+            background: #1E40AF;
+            padding: 4px 8px;
+            letter-spacing: 0.05em;
+        }
+
+        .solution-box {
+            margin-top: 40px;
+            padding: 20px;
+            background: #FDB913;
+            border: none;
+        }
+
+        .solution-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: #1E40AF;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .solution-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1E40AF;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <h1 class="slide-title">The Problem We Solve</h1>
+
+            <div class="section">
+                <h2 class="section-title">Current State</h2>
+                <div class="section-content">
+                    <div class="pain-point">
+                        <i class="fas fa-key pain-icon"></i>
+                        <p class="pain-text">Developers juggle <span class="highlight">5-10 different API keys</span></p>
+                    </div>
+                    <div class="pain-point">
+                        <i class="fas fa-chart-line pain-icon"></i>
+                        <p class="pain-text">Multiple <span class="highlight">billing dashboards</span> to manage</p>
+                    </div>
+                    <div class="pain-point">
+                        <i class="fas fa-exclamation-triangle pain-icon"></i>
+                        <p class="pain-text"><span class="highlight">Inconsistent rate limiting</span> across providers</p>
+                    </div>
+                    <div class="pain-point">
+                        <i class="fas fa-lock pain-icon"></i>
+                        <p class="pain-text">No <span class="highlight">unified cost control</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">The Gap</h2>
+                <div class="section-content">
+                    <p class="pain-text">Providers want more users. Users want simplicity. <span class="highlight">No one wins</span> in a fragmented market.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Our Solution</h2>
+                <div class="section-content">
+                    <p class="pain-text"><span class="highlight">TokenGateway</span> = Single entry point for all AI APIs. Developers get simplicity. Providers get access to new customer segments. Everyone benefits.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <p class="visual-title">Current Fragmentation</p>
+
+            <div class="fragmentation-visual">
+                <div class="api-provider">
+                    <i class="fas fa-cube api-icon"></i>
+                    <span class="api-name">OpenAI</span>
+                    <span class="api-key-badge">API KEY</span>
+                </div>
+                <div class="api-provider">
+                    <i class="fas fa-cube api-icon"></i>
+                    <span class="api-name">Anthropic</span>
+                    <span class="api-key-badge">API KEY</span>
+                </div>
+                <div class="api-provider">
+                    <i class="fas fa-cube api-icon"></i>
+                    <span class="api-name">Cohere</span>
+                    <span class="api-key-badge">API KEY</span>
+                </div>
+                <div class="api-provider">
+                    <i class="fas fa-cube api-icon"></i>
+                    <span class="api-name">HuggingFace</span>
+                    <span class="api-key-badge">API KEY</span>
+                </div>
+                <div class="api-provider">
+                    <i class="fas fa-cube api-icon"></i>
+                    <span class="api-name">Replicate</span>
+                    <span class="api-key-badge">API KEY</span>
+                </div>
+            </div>
+
+            <div class="solution-box">
+                <p class="solution-label">Unified Solution</p>
+                <p class="solution-text">One Gateway. One Key. All Providers.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

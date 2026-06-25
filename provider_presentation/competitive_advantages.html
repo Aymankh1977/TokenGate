@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitive Advantages</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F2F5F7;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            position: relative;
+        }
+
+        /* Header Section */
+        .header-section {
+            padding-top: 60px;
+            padding-left: 60px;
+            padding-right: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.05em;
+            margin-bottom: 40px;
+            line-height: 1.1;
+        }
+
+        /* Comparison Table Section */
+        .table-section {
+            padding-left: 60px;
+            padding-right: 60px;
+            padding-top: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .comparison-table thead tr {
+            border-bottom: 2px solid #CCFF00;
+        }
+
+        .comparison-table th {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #261417;
+            text-align: left;
+            padding: 16px 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .comparison-table th:first-child {
+            width: 25%;
+        }
+
+        .comparison-table th:not(:first-child) {
+            width: 15%;
+            text-align: center;
+        }
+
+        .comparison-table tbody tr {
+            border-bottom: 1px solid rgba(204, 255, 0, 0.2);
+        }
+
+        .comparison-table td {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            color: #261417;
+            padding: 14px 12px;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 500;
+            border-right: 1px solid rgba(204, 255, 0, 0.2);
+        }
+
+        .comparison-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        /* Checkmark and X styling */
+        .check {
+            color: #CCFF00;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .cross {
+            color: #261417;
+            opacity: 0.3;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .partial {
+            color: #CCFF00;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* TokenGateway row highlight */
+        .tokengateway-row {
+            background: rgba(204, 255, 0, 0.1);
+            border-top: 2px solid #CCFF00;
+            border-bottom: 2px solid #CCFF00;
+        }
+
+        .tokengateway-row td:first-child {
+            font-weight: 700;
+            color: #CCFF00;
+        }
+
+        /* Moat Section */
+        .moat-section {
+            padding-left: 60px;
+            padding-right: 60px;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .moat-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #CCFF00;
+            letter-spacing: -0.02em;
+        }
+
+        .moat-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .moat-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .moat-icon {
+            font-size: 18px;
+            color: #CCFF00;
+            min-width: 18px;
+            margin-top: 2px;
+        }
+
+        .moat-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            color: #261417;
+            line-height: 1.5;
+        }
+
+        .moat-text strong {
+            color: #3E0C15;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Header -->
+        <div class="header-section">
+            <h1 class="slide-title">Competitive Advantages</h1>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="table-section">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Factor</th>
+                        <th>Direct API</th>
+                        <th>OpenRouter</th>
+                        <th>Replicate</th>
+                        <th>Together AI</th>
+                        <th>TokenGateway</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Multi-Provider Support</td>
+                        <td><span class="cross">✕</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td class="check"><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Prepaid Tokens</td>
+                        <td><span class="cross">✕</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="cross">✕</span></td>
+                        <td><span class="cross">✕</span></td>
+                        <td class="check"><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Volume Discounts</td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td class="check"><span class="check">✓ 30%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Real-time Analytics</td>
+                        <td><span class="cross">✕</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td class="check"><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cost Control</td>
+                        <td><span class="cross">✕</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="cross">✕</span></td>
+                        <td><span class="cross">✕</span></td>
+                        <td class="check"><span class="check">✓</span></td>
+                    </tr>
+                    <tr class="tokengateway-row">
+                        <td>Developer Experience</td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="partial">⚠</span></td>
+                        <td><span class="check">✓ Seamless</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Moat Section -->
+        <div class="moat-section">
+            <h3 class="moat-title">Our Competitive Moat</h3>
+            <div class="moat-items">
+                <div class="moat-item">
+                    <i class="fas fa-network-wired moat-icon"></i>
+                    <p class="moat-text"><strong>Network Effects:</strong> More providers = more valuable platform</p>
+                </div>
+                <div class="moat-item">
+                    <i class="fas fa-chart-bar moat-icon"></i>
+                    <p class="moat-text"><strong>Data Insights:</strong> Usage patterns across all providers</p>
+                </div>
+                <div class="moat-item">
+                    <i class="fas fa-users moat-icon"></i>
+                    <p class="moat-text"><strong>Developer Community:</strong> High switching costs</p>
+                </div>
+                <div class="moat-item">
+                    <i class="fas fa-lock moat-icon"></i>
+                    <p class="moat-text"><strong>Enterprise Trust:</strong> SOC 2 certified infrastructure</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-Year Financial Projections</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F2F5F7;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 0;
+            align-items: stretch;
+            position: relative;
+        }
+
+        /* Left Section - Projections Table */
+        .left-section {
+            padding-top: 60px;
+            padding-left: 60px;
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.05em;
+            margin-bottom: 40px;
+            line-height: 1.1;
+        }
+
+        .projections-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .projections-table thead tr { border-bottom: 2px solid #CCFF00; }
+        .projections-table th { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #261417; text-align: left; padding: 12px 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .projections-table th:not(:first-child) { text-align: right; }
+        .projections-table tbody tr { border-bottom: 1px solid rgba(204, 255, 0, 0.2); }
+        .projections-table td { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: #261417; padding: 12px 8px; }
+        .projections-table td:not(:first-child) { text-align: right; font-weight: 500; }
+        .metric-row { font-weight: 600; color: #3E0C15; border-top: 1px solid #CCFF00; border-bottom: 1px solid #CCFF00; }
+        .value-highlight { color: #CCFF00; font-weight: 700; }
+
+        /* Right Section - Key Metrics (refreshed layout)
+           - Use a compact grid to reduce vertical stacking
+           - Reduce inner padding/margins but keep font sizes */
+        .right-section {
+            padding-top: 60px;
+            padding-right: 60px;
+            padding-left: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: rgba(204, 255, 0, 0.08);
+            border-left: 1px solid #CCFF00;
+        }
+
+        .metrics-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+
+        /* compact two-column grid for metric cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 18px;
+        }
+
+        .metric-card {
+            margin: 0;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(204, 255, 0, 0.3);
+        }
+        .metric-card:last-child { border-bottom: none; }
+
+        .metric-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #261417; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .metric-value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #CCFF00; letter-spacing: -0.03em; line-height: 1; margin-bottom: 6px; }
+        .metric-description { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: #261417; line-height: 1.2; margin-bottom: 0; }
+
+        .growth-trajectory {
+            background: #CCFF00;
+            color: #3E0C15;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .trajectory-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+        .trajectory-text { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 6px; }
+        .trajectory-icon { font-size: 20px; margin-top: 6px; }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <h1 class="slide-title">5-Year Financial Projections</h1>
+
+            <table class="projections-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Year 1</th>
+                        <th>Year 2</th>
+                        <th>Year 3</th>
+                        <th>Year 4</th>
+                        <th>Year 5</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>New Customers</td>
+                        <td class="value-highlight">10K</td>
+                        <td class="value-highlight">50K</td>
+                        <td class="value-highlight">150K</td>
+                        <td class="value-highlight">300K</td>
+                        <td class="value-highlight">500K</td>
+                    </tr>
+                    <tr>
+                        <td>Avg Revenue/Customer</td>
+                        <td class="value-highlight">$850</td>
+                        <td class="value-highlight">$1,200</td>
+                        <td class="value-highlight">$1,600</td>
+                        <td class="value-highlight">$2,000</td>
+                        <td class="value-highlight">$2,500</td>
+                    </tr>
+                    <tr>
+                        <td>Provider Revenue</td>
+                        <td class="value-highlight">$8.5M</td>
+                        <td class="value-highlight">$60M</td>
+                        <td class="value-highlight">$240M</td>
+                        <td class="value-highlight">$510M</td>
+                        <td class="value-highlight">$1.25B</td>
+                    </tr>
+                    <tr>
+                        <td>YoY Growth Rate</td>
+                        <td>—</td>
+                        <td class="value-highlight">606%</td>
+                        <td class="value-highlight">300%</td>
+                        <td class="value-highlight">113%</td>
+                        <td class="value-highlight">145%</td>
+                    </tr>
+                    <tr class="metric-row">
+                        <td>Cumulative Provider Revenue</td>
+                        <td class="value-highlight">$8.5M</td>
+                        <td class="value-highlight">$68.5M</td>
+                        <td class="value-highlight">$308.5M</td>
+                        <td class="value-highlight">$818.5M</td>
+                        <td class="value-highlight">$2.07B</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <p class="metrics-title">Key Metrics</p>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <p class="metric-label">5-Year CAGR</p>
+                    <p class="metric-value">145%</p>
+                    <p class="metric-description">Compound annual growth rate</p>
+                </div>
+
+                <div class="metric-card">
+                    <p class="metric-label">Per-Provider Year 1</p>
+                    <p class="metric-value">$8.5M</p>
+                    <p class="metric-description">Conservative first-year estimate</p>
+                </div>
+
+                <div class="metric-card">
+                    <p class="metric-label">Per-Provider Year 5</p>
+                    <p class="metric-value">$1.25B</p>
+                    <p class="metric-description">Projected annual revenue</p>
+                </div>
+
+                <div class="metric-card">
+                    <p class="metric-label">Cumulative 5-Year</p>
+                    <p class="metric-value">$884M</p>
+                    <p class="metric-description">Total 5-year provider revenue</p>
+                </div>
+            </div>
+
+            <div class="growth-trajectory">
+                <p class="trajectory-label">Growth Trajectory</p>
+                <p class="trajectory-text">From $8.5M to $1.25B in 5 years</p>
+                <p class="trajectory-icon">📈</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Opportunity</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F2F5F7;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            align-items: stretch;
+            position: relative;
+        }
+
+        /* Left Section - Market Drivers */
+        .left-section {
+            padding-top: 60px;
+            padding-left: 60px;
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.05em;
+            margin-bottom: 50px;
+            line-height: 1.1;
+        }
+
+        .drivers-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .driver-item {
+            display: flex;
+            gap: 16px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #CCFF00;
+        }
+
+        .driver-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .driver-icon {
+            font-size: 28px;
+            color: #CCFF00;
+            min-width: 28px;
+            margin-top: 2px;
+        }
+
+        .driver-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .driver-metric {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #CCFF00;
+            letter-spacing: -0.02em;
+        }
+
+        .driver-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            color: #261417;
+            line-height: 1.5;
+        }
+
+        /* Right Section - TAM Analysis */
+        .right-section {
+            padding-top: 60px;
+            padding-right: 60px;
+            padding-left: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: rgba(204, 255, 0, 0.08);
+            border-left: 1px solid #CCFF00;
+        }
+
+        .tam-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 30px;
+        }
+
+        .tam-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .tam-item {
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(204, 255, 0, 0.3);
+        }
+
+        .tam-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .tam-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: #261417;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .tam-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .tam-value.accent {
+            color: #CCFF00;
+        }
+
+        .tam-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            color: #261417;
+            line-height: 1.5;
+        }
+
+        .opportunity-highlight {
+            background: #CCFF00;
+            color: #3E0C15;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .opportunity-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .opportunity-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Left Section - Market Drivers -->
+        <div class="left-section">
+            <h1 class="slide-title">Market Opportunity</h1>
+
+            <div class="drivers-section">
+                <div class="driver-item">
+                    <i class="fas fa-chart-line driver-icon"></i>
+                    <div class="driver-content">
+                        <div class="driver-metric">150% YoY</div>
+                        <div class="driver-description">AI API market growing at unprecedented rate</div>
+                    </div>
+                </div>
+
+                <div class="driver-item">
+                    <i class="fas fa-exchange-alt driver-icon"></i>
+                    <div class="driver-content">
+                        <div class="driver-metric">Multi-Model Adoption</div>
+                        <div class="driver-description">Developers increasingly use multiple AI providers</div>
+                    </div>
+                </div>
+
+                <div class="driver-item">
+                    <i class="fas fa-building driver-icon"></i>
+                    <div class="driver-content">
+                        <div class="driver-metric">Enterprise Demand</div>
+                        <div class="driver-description">Corporations need cost control and flexibility</div>
+                    </div>
+                </div>
+
+                <div class="driver-item">
+                    <i class="fas fa-lock driver-icon"></i>
+                    <div class="driver-content">
+                        <div class="driver-metric">Security Concerns</div>
+                        <div class="driver-description">Gateway adoption driven by data protection needs</div>
+                    </div>
+                </div>
+
+                <div class="driver-item">
+                    <i class="fas fa-globe driver-icon"></i>
+                    <div class="driver-content">
+                        <div class="driver-metric">Global Expansion</div>
+                        <div class="driver-description">Unified billing required for international growth</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section - TAM Analysis -->
+        <div class="right-section">
+            <p class="tam-title">Total Addressable Market</p>
+
+            <div class="tam-breakdown">
+                <div class="tam-item">
+                    <div class="tam-label">Active Developers Using AI APIs</div>
+                    <div class="tam-value">500K+</div>
+                    <div class="tam-description">Growing rapidly with AI adoption</div>
+                </div>
+
+                <div class="tam-item">
+                    <div class="tam-label">Annual AI API Spending</div>
+                    <div class="tam-value">$50B+</div>
+                    <div class="tam-description">Total market size across all providers</div>
+                </div>
+
+                <div class="tam-item">
+                    <div class="tam-label">Multi-Provider Adoption</div>
+                    <div class="tam-value">5-10%</div>
+                    <div class="tam-description">Current market penetration</div>
+                </div>
+
+                <div class="tam-item">
+                    <div class="tam-label">Untapped Opportunity</div>
+                    <div class="tam-value accent">$40B+</div>
+                    <div class="tam-description">Market gap for unified solutions</div>
+                </div>
+            </div>
+
+            <div class="opportunity-highlight">
+                <div class="opportunity-label">Our Target</div>
+                <div class="opportunity-value">1% = $400M+ Transaction Volume</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

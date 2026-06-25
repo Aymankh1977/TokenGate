@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segments We Unlock</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #F2F5F7;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header Section */
+        .header-section {
+            padding-top: 60px;
+            padding-left: 60px;
+            padding-right: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.05em;
+            line-height: 1.1;
+        }
+
+        .intro-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: #261417;
+            line-height: 1.6;
+            max-width: 800px;
+        }
+
+        .intro-highlight {
+            color: #CCFF00;
+            font-weight: 600;
+        }
+
+        /* Segments Grid */
+        .segments-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            padding-left: 60px;
+            padding-right: 60px;
+            flex: 1;
+        }
+
+        .segment {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            border-right: 1px solid #CCFF00;
+            border-bottom: 1px solid #CCFF00;
+        }
+
+        .segment:nth-child(2n) {
+            border-right: none;
+        }
+
+        .segment:nth-last-child(-n+2) {
+            border-bottom: none;
+        }
+
+        .segment-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .segment-icon {
+            font-size: 28px;
+            color: #CCFF00;
+            min-width: 28px;
+        }
+
+        .segment-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.02em;
+        }
+
+        .segment-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .segment-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .segment-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .segment-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #261417;
+            line-height: 1.5;
+        }
+
+        .segment-value strong {
+            font-weight: 600;
+            color: #3E0C15;
+        }
+
+        .ltv-box {
+            background: #CCFF00;
+            color: #3E0C15;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        /* Footer - TAM */
+        .footer-section {
+            padding-top: 40px;
+            padding-left: 60px;
+            padding-right: 60px;
+            padding-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #CCFF00;
+        }
+
+        .tam-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #CCFF00;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .tam-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #3E0C15;
+            letter-spacing: -0.05em;
+        }
+
+        .tam-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #261417;
+            line-height: 1.5;
+            flex: 1;
+            margin-left: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Header -->
+        <div class="header-section">
+            <h1 class="slide-title">Customer Segments We Unlock</h1>
+            <p class="intro-text">Four new revenue streams targeting different market segments. Each brings unique value and <span class="intro-highlight">expands your addressable market</span>.</p>
+        </div>
+
+        <!-- Segments Grid -->
+        <div class="segments-grid">
+            <!-- Segment 1: Cost-Conscious Startups -->
+            <div class="segment">
+                <div class="segment-header">
+                    <i class="fas fa-rocket segment-icon"></i>
+                    <h3 class="segment-name">Cost-Conscious Startups</h3>
+                </div>
+                <div class="segment-content">
+                    <div class="segment-row">
+                        <span class="segment-label">Budget</span>
+                        <span class="segment-value"><strong>$500-5,000/month</strong></span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Pain Point</span>
+                        <span class="segment-value">Surprise bills, complexity</span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Solution</span>
+                        <span class="segment-value">TokenGateway prepaid + multi-provider</span>
+                    </div>
+                    <div class="ltv-box">LTV: $50K-200K</div>
+                </div>
+            </div>
+
+            <!-- Segment 2: Enterprise Teams -->
+            <div class="segment">
+                <div class="segment-header">
+                    <i class="fas fa-building segment-icon"></i>
+                    <h3 class="segment-name">Enterprise Teams</h3>
+                </div>
+                <div class="segment-content">
+                    <div class="segment-row">
+                        <span class="segment-label">Budget</span>
+                        <span class="segment-value"><strong>$50K-500K/month</strong></span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Pain Point</span>
+                        <span class="segment-value">Vendor lock-in, billing complexity</span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Solution</span>
+                        <span class="segment-value">TokenGateway flexibility + analytics</span>
+                    </div>
+                    <div class="ltv-box">LTV: $500K-2M</div>
+                </div>
+            </div>
+
+            <!-- Segment 3: AI Agencies -->
+            <div class="segment">
+                <div class="segment-header">
+                    <i class="fas fa-users segment-icon"></i>
+                    <h3 class="segment-name">AI Agencies</h3>
+                </div>
+                <div class="segment-content">
+                    <div class="segment-row">
+                        <span class="segment-label">Budget</span>
+                        <span class="segment-value"><strong>$5K-50K/month</strong></span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Pain Point</span>
+                        <span class="segment-value">Managing client billing</span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Solution</span>
+                        <span class="segment-value">TokenGateway white-label + resale</span>
+                    </div>
+                    <div class="ltv-box">LTV: $100K-500K</div>
+                </div>
+            </div>
+
+            <!-- Segment 4: Emerging Markets -->
+            <div class="segment">
+                <div class="segment-header">
+                    <i class="fas fa-globe segment-icon"></i>
+                    <h3 class="segment-name">Emerging Markets</h3>
+                </div>
+                <div class="segment-content">
+                    <div class="segment-row">
+                        <span class="segment-label">Budget</span>
+                        <span class="segment-value"><strong>$100-1,000/month</strong></span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Pain Point</span>
+                        <span class="segment-value">Payment infrastructure, currency</span>
+                    </div>
+                    <div class="segment-row">
+                        <span class="segment-label">Solution</span>
+                        <span class="segment-value">TokenGateway local payments + prepaid</span>
+                    </div>
+                    <div class="ltv-box">LTV: $10K-50K</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-section">
+            <div>
+                <p class="tam-label">Total New Addressable Market</p>
+                <p class="tam-value">$5B+</p>
+            </div>
+            <p class="tam-description">Across all four segments, TokenGateway unlocks a massive market opportunity that was previously inaccessible through direct API sales.</p>
+        </div>
+    </div>
+</body>
+</html>

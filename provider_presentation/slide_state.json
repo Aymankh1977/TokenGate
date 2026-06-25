@@ -1,0 +1,199 @@
+{
+  "project_info": {
+    "title": "AI Token Gateway",
+    "created": 1782323841.065,
+    "last_updated": 1782409346.411,
+    "total_slides": 17
+  },
+  "slides": [
+    {
+      "id": "title_slide",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "problem_statement",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "what_is_gateway",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "market_opportunity",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "revenue_model",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "partnership_model",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "customer_segments",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "competitive_advantages",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "risk_mitigation",
+      "state": "edit_pending",
+      "pageNum": 9
+    },
+    {
+      "id": "success_metrics",
+      "state": "edit_pending",
+      "pageNum": 10
+    },
+    {
+      "id": "implementation_timeline",
+      "state": "edit_pending",
+      "pageNum": 11
+    },
+    {
+      "id": "financial_projections",
+      "state": "edited",
+      "pageNum": 12
+    },
+    {
+      "id": "case_study",
+      "state": "edit_pending",
+      "pageNum": 13
+    },
+    {
+      "id": "competitive_landscape",
+      "state": "edit_pending",
+      "pageNum": 14
+    },
+    {
+      "id": "call_to_action",
+      "state": "edit_pending",
+      "pageNum": 15
+    },
+    {
+      "id": "qa_slide",
+      "state": "edit_pending",
+      "pageNum": 16
+    },
+    {
+      "id": "thank_you",
+      "state": "edit_pending",
+      "pageNum": 17
+    }
+  ],
+  "outline": [
+    {
+      "id": "title_slide",
+      "title": "AI Token Gateway",
+      "summary": "Title slide introducing the unified AI API gateway platform and partnership opportunity for providers.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "problem_statement",
+      "title": "The Problem We Solve",
+      "summary": "Market fragmentation crisis: developers juggle multiple API keys, inconsistent billing, and high complexity. TokenGateway provides a unified solution.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "what_is_gateway",
+      "title": "What is TokenGateway?",
+      "summary": "Core value proposition: consolidates access, simplifies billing, enables analytics, ensures security, and scales efficiently across all AI providers.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "market_opportunity",
+      "title": "Market Opportunity",
+      "summary": "150% YoY market growth, $50B+ annual AI API spending, only 5-10% using multi-provider solutions. $40B+ untapped market opportunity.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "revenue_model",
+      "title": "Revenue Model for Providers",
+      "summary": "Direct revenue increase through new customer acquisition, increased usage per customer, and reduced churn. Year 1 impact: $20M-$90M per provider.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "partnership_model",
+      "title": "Partnership Model",
+      "summary": "15% commission on transactions, providers receive 85% of token value. Includes API integration, co-marketing, and 99.9% SLA support.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "customer_segments",
+      "title": "Customer Segments We Unlock",
+      "summary": "Four new revenue streams: cost-conscious startups, enterprise teams, AI agencies, and emerging markets. Total addressable market: $5B+.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "competitive_advantages",
+      "title": "Competitive Advantages",
+      "summary": "Multi-provider support, prepaid tokens, 30% volume discounts, advanced analytics, hard cost control, and enterprise-grade security.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "risk_mitigation",
+      "title": "Risk Mitigation",
+      "summary": "Addresses concerns about cannibalization, infrastructure reliability, fraud prevention, and data privacy with concrete solutions and certifications.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "success_metrics",
+      "title": "Success Metrics",
+      "summary": "Transparent measurement of partnership success through new customer acquisition, revenue growth, customer retention, and quarterly business reviews.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "implementation_timeline",
+      "title": "Implementation Timeline",
+      "summary": "12-month partnership roadmap: Month 1 integration, Month 2 beta launch, Month 3 full launch, Months 4-12 growth and optimization.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "financial_projections",
+      "title": "5-Year Financial Projections",
+      "summary": "Provider revenue grows from $8.5M Year 1 to $510M Year 5. Cumulative 5-year provider revenue: $884M across all providers.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "case_study",
+      "title": "Early Results & Case Study",
+      "summary": "Beta partner achieved $750K monthly revenue, 2,000 new customers, 2.5x higher token consumption, 95% uptime, and 98% satisfaction.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "competitive_landscape",
+      "title": "Competitive Landscape",
+      "summary": "TokenGateway differentiates through true multi-provider support, prepaid tokens, enterprise features, provider-friendly revenue share, and superior developer experience.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "call_to_action",
+      "title": "Let's Partner",
+      "summary": "Partnership commitment: API integration, pricing transparency, co-marketing, and 12-month term. Providers gain new revenue, customers, and market expansion.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "qa_slide",
+      "title": "Questions & Answers",
+      "summary": "Address common questions about rate limiting, data privacy, white-labeling, partnership exit, fraud prevention, and product roadmap.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "thank_you",
+      "title": "Thank You",
+      "summary": "Closing slide with call to action and contact information for business development and technical integration.",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}
