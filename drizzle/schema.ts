@@ -10,18 +10,15 @@ import {
   json,
 } from "drizzle-orm/mysql-core";
 
-/**
- * users — balance is now balancePico (BIGINT pico-USD), NOT a decimal "token"
- * count. This removes the unit mismatch that made the old build lose ~100x.
- */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
+  // Local email/password accounts store a scrypt hash here (null for OAuth users).
+  passwordHash: varchar("passwordHash", { length: 255 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
-  // Prepaid balance in pico-USD (1 USD = 1e12). Integer => no float drift.
   balancePico: bigint("balancePico", { mode: "bigint" }).default(0n).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -30,17 +27,12 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-/**
- * transactions — amounts stored as USD strings for human-readable ledgers;
- * the authoritative balance is users.balancePico. costUsd lets admin see
- * provider cost vs charged (margin) per usage row.
- */
 export const transactions = mysqlTable("transactions", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   type: mysqlEnum("type", ["purchase", "usage", "refund"]).notNull(),
-  amountUsd: varchar("amountUsd", { length: 32 }).notNull(), // charged/granted
-  costUsd: varchar("costUsd", { length: 32 }), // provider cost (usage rows)
+  amountUsd: varchar("amountUsd", { length: 32 }).notNull(),
+  costUsd: varchar("costUsd", { length: 32 }),
   description: text("description"),
   stripePaymentId: varchar("stripePaymentId", { length: 255 }),
   metadata: json("metadata"),
@@ -48,15 +40,11 @@ export const transactions = mysqlTable("transactions", {
 });
 export type Transaction = typeof transactions.$inferSelect;
 
-/**
- * apiKeys — we now store ONLY an HMAC-SHA256 hash of the key. The plaintext is
- * shown to the user exactly once at creation and never persisted.
- */
 export const apiKeys = mysqlTable("apiKeys", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   keyHash: varchar("keyHash", { length: 128 }).notNull().unique(),
-  keyPrefix: varchar("keyPrefix", { length: 16 }).notNull(), // e.g. "tg_AbCd" (display)
+  keyPrefix: varchar("keyPrefix", { length: 16 }).notNull(),
   last4: varchar("last4", { length: 8 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   lastUsedAt: timestamp("lastUsedAt"),
@@ -66,7 +54,6 @@ export const apiKeys = mysqlTable("apiKeys", {
 });
 export type ApiKey = typeof apiKeys.$inferSelect;
 
-/** usageLogs — counts + USD figures for analytics. */
 export const usageLogs = mysqlTable("usageLogs", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
@@ -83,10 +70,6 @@ export const usageLogs = mysqlTable("usageLogs", {
 });
 export type UsageLog = typeof usageLogs.$inferSelect;
 
-/**
- * modelPricing — prices stored as integer pico-USD per token (exact).
- * Seed it (seedModelPricing.ts) or the gateway returns "model not supported".
- */
 export const modelPricing = mysqlTable("modelPricing", {
   id: int("id").autoincrement().primaryKey(),
   model: varchar("model", { length: 255 }).notNull().unique(),
@@ -99,10 +82,6 @@ export const modelPricing = mysqlTable("modelPricing", {
 });
 export type ModelPricing = typeof modelPricing.$inferSelect;
 
-/**
- * processedStripeEvents — webhook idempotency. Stripe retries deliveries; we
- * record each event id once so a retry can never double-credit a balance.
- */
 export const processedStripeEvents = mysqlTable("processedStripeEvents", {
   eventId: varchar("eventId", { length: 255 }).primaryKey(),
   type: varchar("type", { length: 100 }),
