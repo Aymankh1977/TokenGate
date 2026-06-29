@@ -1,8 +1,18 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json } from "drizzle-orm/mysql-core";
+import {
+  int,
+  bigint,
+  mysqlEnum,
+  mysqlTable,
+  text,
+  timestamp,
+  varchar,
+  boolean,
+  json,
+} from "drizzle-orm/mysql-core";
 
 /**
- * Core user table backing auth flow.
- * Extended with token gateway specific fields.
+ * users — balance is now balancePico (BIGINT pico-USD), NOT a decimal "token"
+ * count. This removes the unit mismatch that made the old build lose ~100x.
  */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -11,84 +21,91 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
-  tokenBalance: decimal("tokenBalance", { precision: 20, scale: 6 }).default("0").notNull(),
+  // Prepaid balance in pico-USD (1 USD = 1e12). Integer => no float drift.
+  balancePico: bigint("balancePico", { mode: "bigint" }).default(0n).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
-
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
- * Transactions table for tracking all token purchases and usage
+ * transactions — amounts stored as USD strings for human-readable ledgers;
+ * the authoritative balance is users.balancePico. costUsd lets admin see
+ * provider cost vs charged (margin) per usage row.
  */
 export const transactions = mysqlTable("transactions", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   type: mysqlEnum("type", ["purchase", "usage", "refund"]).notNull(),
-  amount: decimal("amount", { precision: 20, scale: 6 }).notNull(),
+  amountUsd: varchar("amountUsd", { length: 32 }).notNull(), // charged/granted
+  costUsd: varchar("costUsd", { length: 32 }), // provider cost (usage rows)
   description: text("description"),
   stripePaymentId: varchar("stripePaymentId", { length: 255 }),
   metadata: json("metadata"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
-
 export type Transaction = typeof transactions.$inferSelect;
-export type InsertTransaction = typeof transactions.$inferInsert;
 
 /**
- * API Keys table for user API key management
+ * apiKeys — we now store ONLY an HMAC-SHA256 hash of the key. The plaintext is
+ * shown to the user exactly once at creation and never persisted.
  */
 export const apiKeys = mysqlTable("apiKeys", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
-  keyHash: varchar("keyHash", { length: 255 }).notNull().unique(),
-  keyPrefix: varchar("keyPrefix", { length: 20 }).notNull(),
+  keyHash: varchar("keyHash", { length: 128 }).notNull().unique(),
+  keyPrefix: varchar("keyPrefix", { length: 16 }).notNull(), // e.g. "tg_AbCd" (display)
+  last4: varchar("last4", { length: 8 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   lastUsedAt: timestamp("lastUsedAt"),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
-
 export type ApiKey = typeof apiKeys.$inferSelect;
-export type InsertApiKey = typeof apiKeys.$inferInsert;
 
-/**
- * Usage logs table for tracking API calls and token consumption
- */
+/** usageLogs — counts + USD figures for analytics. */
 export const usageLogs = mysqlTable("usageLogs", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   apiKeyId: int("apiKeyId"),
   model: varchar("model", { length: 255 }).notNull(),
   service: varchar("service", { length: 100 }).notNull(),
-  tokensUsed: decimal("tokensUsed", { precision: 20, scale: 6 }).notNull(),
-  tokensDeducted: decimal("tokensDeducted", { precision: 20, scale: 6 }).notNull(),
+  chargedUsd: varchar("chargedUsd", { length: 32 }).notNull(),
+  costUsd: varchar("costUsd", { length: 32 }).notNull(),
   requestTokens: int("requestTokens"),
   responseTokens: int("responseTokens"),
   status: mysqlEnum("status", ["success", "failed", "insufficient_balance"]).notNull(),
   metadata: json("metadata"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
-
 export type UsageLog = typeof usageLogs.$inferSelect;
-export type InsertUsageLog = typeof usageLogs.$inferInsert;
 
 /**
- * Model pricing table for token deduction calculations
+ * modelPricing — prices stored as integer pico-USD per token (exact).
+ * Seed it (seedModelPricing.ts) or the gateway returns "model not supported".
  */
 export const modelPricing = mysqlTable("modelPricing", {
   id: int("id").autoincrement().primaryKey(),
   model: varchar("model", { length: 255 }).notNull().unique(),
   service: varchar("service", { length: 100 }).notNull(),
-  inputTokenPrice: decimal("inputTokenPrice", { precision: 20, scale: 10 }).notNull(),
-  outputTokenPrice: decimal("outputTokenPrice", { precision: 20, scale: 10 }).notNull(),
+  inputPicoPerToken: bigint("inputPicoPerToken", { mode: "bigint" }).notNull(),
+  outputPicoPerToken: bigint("outputPicoPerToken", { mode: "bigint" }).notNull(),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
-
 export type ModelPricing = typeof modelPricing.$inferSelect;
-export type InsertModelPricing = typeof modelPricing.$inferInsert;
+
+/**
+ * processedStripeEvents — webhook idempotency. Stripe retries deliveries; we
+ * record each event id once so a retry can never double-credit a balance.
+ */
+export const processedStripeEvents = mysqlTable("processedStripeEvents", {
+  eventId: varchar("eventId", { length: 255 }).primaryKey(),
+  type: varchar("type", { length: 100 }),
+  processedAt: timestamp("processedAt").defaultNow().notNull(),
+});
+export type ProcessedStripeEvent = typeof processedStripeEvents.$inferSelect;

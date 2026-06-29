@@ -1,202 +1,179 @@
-import { Request, Response } from 'express';
-import axios from 'axios';
-import * as db from './db';
-import { TRPCError } from '@trpc/server';
+import { Request, Response } from "express";
+import * as db from "./db";
+import {
+  callProvider,
+  isSupportedProvider,
+  Provider,
+} from "./providers";
+import {
+  providerCostPico,
+  retailPico,
+  reservePico,
+  estimateInputTokens,
+  markupBpsFromEnv,
+  picoToUsdString,
+} from "./billing/billing";
+
+export interface GatewayCallParams {
+  userId: number;
+  apiKeyId?: number;
+  provider: string;
+  model: string;
+  messages: Array<{ role: string; content: string }>;
+  maxTokens?: number;
+  temperature?: number;
+}
+
+export interface GatewayCallResult {
+  response: unknown;
+  usage: { inputTokens: number; outputTokens: number };
+  chargedUsd: string;
+  costUsd: string;
+}
 
 /**
- * AI Gateway Handler
- * Proxies requests to AI providers and handles token metering
+ * Core billing-correct gateway call, shared by the HTTP handler and the tRPC
+ * router. Flow:
+ *   1. look up integer pico/token pricing for the model
+ *   2. estimate cost and ATOMICALLY reserve it (fails fast if insufficient)
+ *   3. call the provider via its correct adapter
+ *   4. settle to ACTUAL usage; refund the unused reservation
+ * No overspend, no double-spend, real markup applied.
  */
+export async function executeGatewayCall(
+  p: GatewayCallParams,
+): Promise<GatewayCallResult> {
+  if (!isSupportedProvider(p.provider)) {
+    throw new GatewayError(400, `Provider ${p.provider} not supported`);
+  }
+  const provider = p.provider as Provider;
 
-interface AIRequest {
-  model: string;
-  messages?: Array<{ role: string; content: string }>;
-  stream?: boolean;
-  [key: string]: unknown;
-}
+  const pricing = await db.getModelPricing(p.model);
+  if (!pricing) {
+    throw new GatewayError(400, `Model ${p.model} not supported (is modelPricing seeded?)`);
+  }
+  const inPico = pricing.inputPicoPerToken;
+  const outPico = pricing.outputPicoPerToken;
+  const markup = markupBpsFromEnv();
 
-interface AIResponse {
-  usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-  [key: string]: unknown;
-}
+  const estIn = estimateInputTokens(p.messages);
+  const estOut = p.maxTokens ?? 1024;
+  const reserve = reservePico(estIn, estOut, inPico, outPico, markup);
 
-const PROVIDER_ENDPOINTS: Record<string, string> = {
-  'openai': 'https://api.openai.com/v1/chat/completions',
-  'anthropic': 'https://api.anthropic.com/v1/messages',
-  'cohere': 'https://api.cohere.ai/v1/generate',
-};
-
-export async function handleAIGatewayRequest(req: Request, res: Response) {
-  try {
-    const userId = (req as any).userId;
-    const apiKeyId = (req as any).apiKeyId;
-    const { provider, model, ...requestBody } = req.body as AIRequest & { provider: string };
-
-    if (!provider || !model) {
-      return res.status(400).json({ error: 'Missing provider or model' });
-    }
-
-    // Get user and check token balance
-    const user = await db.getUserById(userId);
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' });
-    }
-
-    // Get model pricing
-    const pricing = await db.getModelPricing(model);
-    if (!pricing) {
-      return res.status(400).json({ error: `Model ${model} not supported` });
-    }
-
-    // Get provider endpoint
-    const endpoint = PROVIDER_ENDPOINTS[provider];
-    if (!endpoint) {
-      return res.status(400).json({ error: `Provider ${provider} not supported` });
-    }
-
-    // Make request to AI provider
-    let aiResponse: AIResponse;
-    try {
-      const response = await axios.post(endpoint, requestBody, {
-        headers: {
-          'Authorization': `Bearer ${process.env[`${provider.toUpperCase()}_API_KEY`]}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 30000,
-      });
-      aiResponse = response.data;
-    } catch (error: any) {
-      console.error(`[AI Gateway] Error calling ${provider}:`, error.message);
-      return res.status(502).json({ error: `Failed to call ${provider} API` });
-    }
-
-    // Calculate token usage
-    const usage = aiResponse.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
-    const inputTokens = usage.prompt_tokens || 0;
-    const outputTokens = usage.completion_tokens || 0;
-
-    // Calculate token cost
-    const inputCost = parseFloat(pricing.inputTokenPrice.toString()) * inputTokens;
-    const outputCost = parseFloat(pricing.outputTokenPrice.toString()) * outputTokens;
-    const totalCost = (inputCost + outputCost).toString();
-
-    // Check if user has sufficient balance
-    const currentBalance = parseFloat(user.tokenBalance.toString());
-    if (currentBalance < parseFloat(totalCost)) {
-      // Log failed attempt
-      await db.createUsageLog(
-        userId,
-        model,
-        provider,
-        totalCost,
-        '0',
-        'insufficient_balance',
-        inputTokens,
-        outputTokens,
-        apiKeyId,
-        { endpoint, requestBody }
-      );
-
-      return res.status(402).json({
-        error: 'Insufficient token balance',
-        required: totalCost,
-        available: user.tokenBalance.toString(),
-      });
-    }
-
-    // Deduct tokens from user balance
-    const newBalance = (currentBalance - parseFloat(totalCost)).toString();
-    await db.updateUserTokenBalance(userId, newBalance);
-
-    // Log successful usage
-    await db.createUsageLog(
-      userId,
-      model,
-      provider,
-      totalCost,
-      totalCost,
-      'success',
-      inputTokens,
-      outputTokens,
-      apiKeyId,
-      { endpoint, inputCost, outputCost }
-    );
-
-    // Create transaction record
-    await db.createTransaction(
-      userId,
-      'usage',
-      totalCost,
-      `API call to ${provider} using ${model}`,
-      undefined,
-      {
-        provider,
-        model,
-        inputTokens,
-        outputTokens,
-        inputCost,
-        outputCost,
-      }
-    );
-
-    // Return response with usage info
-    return res.json({
-      ...aiResponse,
-      _gateway_info: {
-        tokens_deducted: totalCost,
-        new_balance: newBalance,
-        usage: {
-          input_tokens: inputTokens,
-          output_tokens: outputTokens,
-          input_cost: inputCost,
-          output_cost: outputCost,
-        },
-      },
+  const held = await db.reserveCredits(p.userId, reserve);
+  if (!held) {
+    await db.recordUsage({
+      userId: p.userId,
+      apiKeyId: p.apiKeyId,
+      model: p.model,
+      service: provider,
+      chargedPico: 0n,
+      costPico: 0n,
+      status: "insufficient_balance",
+      metadata: { reserveUsd: picoToUsdString(reserve) },
     });
-  } catch (error) {
-    console.error('[AI Gateway] Unexpected error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    throw new GatewayError(402, "Insufficient balance", {
+      requiredUsd: picoToUsdString(reserve),
+    });
+  }
+
+  let result;
+  try {
+    result = await callProvider(provider, {
+      model: p.model,
+      messages: p.messages,
+      maxTokens: p.maxTokens,
+      temperature: p.temperature,
+    });
+  } catch (err: any) {
+    // Provider failed — refund the entire hold so the user isn't charged.
+    await db.refundCredits(p.userId, reserve);
+    await db.recordUsage({
+      userId: p.userId,
+      apiKeyId: p.apiKeyId,
+      model: p.model,
+      service: provider,
+      chargedPico: 0n,
+      costPico: 0n,
+      status: "failed",
+      metadata: { error: String(err?.message ?? err) },
+    });
+    throw new GatewayError(502, `Provider call failed: ${err?.message ?? err}`);
+  }
+
+  const { inputTokens, outputTokens } = result.usage;
+  const cost = providerCostPico(inputTokens, outputTokens, inPico, outPico);
+  let charged = retailPico(inputTokens, outputTokens, inPico, outPico, markup);
+
+  // Settle: refund the difference between the hold and the real charge.
+  if (charged <= reserve) {
+    await db.refundCredits(p.userId, reserve - charged);
+  } else {
+    // Real usage exceeded the padded estimate (rare). Try to take the extra;
+    // if the user can't cover it, cap the charge at what we already held.
+    const extra = charged - reserve;
+    const tookExtra = await db.reserveCredits(p.userId, extra);
+    if (!tookExtra) charged = reserve;
+  }
+
+  await db.recordUsage({
+    userId: p.userId,
+    apiKeyId: p.apiKeyId,
+    model: p.model,
+    service: provider,
+    chargedPico: charged,
+    costPico: cost,
+    requestTokens: inputTokens,
+    responseTokens: outputTokens,
+    status: "success",
+    metadata: { markupBps: Number(markup) },
+  });
+
+  return {
+    response: result.raw,
+    usage: { inputTokens, outputTokens },
+    chargedUsd: picoToUsdString(charged),
+    costUsd: picoToUsdString(cost),
+  };
+}
+
+export class GatewayError extends Error {
+  constructor(public status: number, message: string, public extra?: Record<string, unknown>) {
+    super(message);
   }
 }
 
-export async function getGatewayStats(userId: number) {
+/**
+ * HTTP entry point for programmatic API-key access.
+ * Mount with the API-key middleware which sets req.userId / req.apiKeyId:
+ *   app.post("/api/gateway", apiKeyAuth, handleAIGatewayRequest)
+ */
+export async function handleAIGatewayRequest(req: Request, res: Response) {
+  const userId = (req as any).userId as number | undefined;
+  const apiKeyId = (req as any).apiKeyId as number | undefined;
+  if (!userId) return res.status(401).json({ error: "Unauthenticated" });
+
+  const { provider, model, messages, maxTokens, temperature } = req.body ?? {};
+  if (!provider || !model || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "provider, model and messages[] are required" });
+  }
+
   try {
-    const logs = await db.getUsageLogsByUserId(userId, 1000);
-
-    const stats = {
-      totalRequests: logs.length,
-      successfulRequests: logs.filter(l => l.status === 'success').length,
-      failedRequests: logs.filter(l => l.status === 'failed').length,
-      insufficientBalanceRequests: logs.filter(l => l.status === 'insufficient_balance').length,
-      totalTokensUsed: logs.reduce((sum, l) => sum + parseFloat(l.tokensUsed.toString()), 0),
-      totalTokensDeducted: logs.reduce((sum, l) => sum + parseFloat(l.tokensDeducted.toString()), 0),
-      byProvider: {} as Record<string, { requests: number; tokensUsed: number }>,
-      byModel: {} as Record<string, { requests: number; tokensUsed: number }>,
-    };
-
-    logs.forEach(log => {
-      // By provider
-      if (!stats.byProvider[log.service]) {
-        stats.byProvider[log.service] = { requests: 0, tokensUsed: 0 };
-      }
-      stats.byProvider[log.service].requests++;
-      stats.byProvider[log.service].tokensUsed += parseFloat(log.tokensUsed.toString());
-
-      // By model
-      if (!stats.byModel[log.model]) {
-        stats.byModel[log.model] = { requests: 0, tokensUsed: 0 };
-      }
-      stats.byModel[log.model].requests++;
-      stats.byModel[log.model].tokensUsed += parseFloat(log.tokensUsed.toString());
+    const out = await executeGatewayCall({
+      userId,
+      apiKeyId,
+      provider,
+      model,
+      messages,
+      maxTokens,
+      temperature,
     });
-
-    return stats;
-  } catch (error) {
-    console.error('[AI Gateway] Error getting stats:', error);
-    throw error;
+    return res.json(out);
+  } catch (e) {
+    if (e instanceof GatewayError) {
+      return res.status(e.status).json({ error: e.message, ...(e.extra ?? {}) });
+    }
+    console.error("[AI Gateway] Unexpected error:", e);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
