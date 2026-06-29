@@ -212,9 +212,11 @@ class SDKServer {
       });
       const { openId, appId, name } = payload as Record<string, unknown>;
 
+      const isLocalSession =
+        typeof openId === "string" && openId.startsWith("local:");
       if (
         !isNonEmptyString(openId) ||
-        !isNonEmptyString(appId) ||
+        (!isLocalSession && !isNonEmptyString(appId)) ||
         !isNonEmptyString(name)
       ) {
         console.warn("[Auth] Session payload missing required fields");
