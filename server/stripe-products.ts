@@ -1,48 +1,32 @@
 /**
- * Stripe Products Configuration
- * Defines token packages available for purchase
+ * Credit packages. A package is "pay priceUsd, receive grantUsd of prepaid
+ * USD credit". The bonus (grantUsd - priceUsd) is the only discount; keep it
+ * BELOW the usage markup or larger tiers go upside-down.
+ *
+ * With MARKUP_BPS=13000 (+30%), realized margin per tier ≈ (1.30 * priceUsd /
+ * grantUsd) - 1. The bonuses below all stay net-positive — see the spreadsheet.
  */
-
-export const tokenPackages = [
-  {
-    id: "package_1000",
-    name: "Starter Pack",
-    tokens: 1000,
-    price: 10, // USD
-    description: "Perfect for getting started with AI APIs",
-  },
-  {
-    id: "package_5000",
-    name: "Growth Pack",
-    tokens: 5000,
-    price: 45, // USD - 10% discount
-    description: "For active development and testing",
-  },
-  {
-    id: "package_10000",
-    name: "Professional Pack",
-    tokens: 10000,
-    price: 80, // USD - 20% discount
-    description: "For production applications",
-  },
-  {
-    id: "package_50000",
-    name: "Enterprise Pack",
-    tokens: 50000,
-    price: 350, // USD - 30% discount
-    description: "For large-scale deployments",
-  },
-];
-
-export function getTokenPackage(packageId: string) {
-  return tokenPackages.find(p => p.id === packageId);
+export interface CreditPackage {
+  id: string;
+  name: string;
+  priceUsd: number; // what the customer pays
+  grantUsd: number; // prepaid credit they receive
+  description: string;
 }
 
-export function getTokensForPrice(priceInCents: number): number {
-  // Convert price in cents to price in dollars
-  const priceInDollars = priceInCents / 100;
-  
-  // Find the package that matches this price
-  const pkg = tokenPackages.find(p => p.price === priceInDollars);
-  return pkg?.tokens || 0;
+export const creditPackages: CreditPackage[] = [
+  { id: "starter", name: "Starter", priceUsd: 10, grantUsd: 10, description: "Try it out — no bonus" },
+  { id: "growth", name: "Growth", priceUsd: 50, grantUsd: 52.5, description: "+5% bonus credit" },
+  { id: "professional", name: "Professional", priceUsd: 200, grantUsd: 216, description: "+8% bonus credit" },
+  { id: "enterprise", name: "Enterprise", priceUsd: 1000, grantUsd: 1120, description: "+12% bonus credit" },
+];
+
+export function getCreditPackage(id: string): CreditPackage | undefined {
+  return creditPackages.find((p) => p.id === id);
+}
+
+/** Effective net margin for a tier given a markup in basis points. */
+export function tierNetMarginPct(pkg: CreditPackage, markupBps = 13000): number {
+  const realized = (markupBps / 10000) * (pkg.priceUsd / pkg.grantUsd) - 1;
+  return realized * 100;
 }
