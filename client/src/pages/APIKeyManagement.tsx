@@ -68,7 +68,7 @@ export default function APIKeyManagement() {
             <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
               <Key className="h-5 w-5 text-accent-foreground" />
             </div>
-            <h1 className="text-2xl font-bold">TokenGate</h1>
+            <h1 className="text-2xl font-bold">Token-Oasis</h1>
           </div>
           <Button
             variant="outline"
@@ -90,7 +90,7 @@ export default function APIKeyManagement() {
             <div>
               <h2 className="text-3xl font-bold">API Keys</h2>
               <p className="text-muted-foreground mt-2">
-                Generate and manage API keys for programmatic access to the TokenGate API
+                Generate and manage API keys for programmatic access to the Token-Oasis API
               </p>
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

@@ -90,9 +90,9 @@ export default function Home() {
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
-              <Zap className="h-5 w-5 text-accent-foreground" />
+              <img src="/logo.png" alt="Token-Oasis" className="h-9 w-9 rounded-lg" />
             </div>
-            <span className="text-lg font-semibold">TokenGate</span>
+            <span className="text-lg font-semibold">Token-Oasis</span>
           </div>
           <div className="flex items-center gap-4">
             {isAuthenticated ? (
@@ -211,7 +211,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {providers.map((provider) => (
               <div key={provider.name} className="flex flex-col items-center gap-3 p-6 bg-card rounded-lg border border-border hover:border-accent/50 transition-colors">
-                <div className="text-5xl">{provider.emoji}</div>
+                <img src={provider.logo} alt={provider.name} className="h-12 w-12 object-contain" />
                 <p className="font-semibold text-center text-sm">{provider.name}</p>
               </div>
             ))}
@@ -275,7 +275,7 @@ export default function Home() {
               Ready to Get Started?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Join thousands of developers using TokenGate to manage their AI API access.
+              Join thousands of developers using Token-Oasis to manage their AI API access.
             </p>
             {isAuthenticated ? (
               <Button
@@ -308,9 +308,9 @@ export default function Home() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="h-6 w-6 rounded-lg bg-accent flex items-center justify-center">
-                  <Zap className="h-4 w-4 text-accent-foreground" />
+                  <img src="/logo.png" alt="Token-Oasis" className="h-6 w-6 rounded" />
                 </div>
-                <span className="font-semibold">TokenGate</span>
+                <span className="font-semibold">Token-Oasis</span>
               </div>
               <p className="text-sm text-muted-foreground">AI Token Gateway Platform</p>
             </div>
@@ -341,7 +341,7 @@ export default function Home() {
           </div>
           <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">
-              © 2026 TokenGate. All rights reserved.
+              © 2026 Token-Oasis. All rights reserved.
             </p>
             <p className="text-sm text-muted-foreground mt-4 sm:mt-0">
               Made with <span className="text-accent">♥</span> for developers

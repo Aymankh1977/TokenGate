@@ -48,7 +48,7 @@ export default function BuyTokens() {
             <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
               <Zap className="h-5 w-5 text-accent-foreground" />
             </div>
-            <h1 className="text-2xl font-bold">TokenGate</h1>
+            <h1 className="text-2xl font-bold">Token-Oasis</h1>
           </div>
           <Button
             variant="outline"
