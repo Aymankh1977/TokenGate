@@ -1,7 +1,5 @@
 import "dotenv/config";
 import { migrate } from "drizzle-orm/mysql2/migrator";
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
@@ -32,12 +30,10 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function runMigrations() {
-  const url = process.env.DATABASE_URL;
-  if (!url) { console.warn("[Migrations] DATABASE_URL not set, skipping"); return; }
-  const connection = await mysql.createConnection(url);
-  const db = drizzle(connection);
+  const { getDb } = await import("../db");
+  const db = await getDb();
+  if (!db) { console.warn("[Migrations] No DB connection, skipping"); return; }
   await migrate(db, { migrationsFolder: "drizzle" });
-  await connection.end();
   console.log("[Migrations] Done");
 }
 
