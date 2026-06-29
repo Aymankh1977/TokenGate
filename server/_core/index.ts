@@ -1,4 +1,7 @@
 import "dotenv/config";
+import { migrate } from "drizzle-orm/mysql2/migrator";
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
@@ -28,7 +31,18 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
+async function runMigrations() {
+  const url = process.env.DATABASE_URL;
+  if (!url) { console.warn("[Migrations] DATABASE_URL not set, skipping"); return; }
+  const connection = await mysql.createConnection(url);
+  const db = drizzle(connection);
+  await migrate(db, { migrationsFolder: "drizzle" });
+  await connection.end();
+  console.log("[Migrations] Done");
+}
+
 async function startServer() {
+  await runMigrations();
   const app = express();
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
