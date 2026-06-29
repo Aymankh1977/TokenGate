@@ -30,11 +30,15 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function runMigrations() {
-  const { getDb } = await import("../db");
-  const db = await getDb();
-  if (!db) { console.warn("[Migrations] No DB connection, skipping"); return; }
-  await migrate(db, { migrationsFolder: "drizzle" });
-  console.log("[Migrations] Done");
+  try {
+    const { getDb } = await import("../db");
+    const db = await getDb();
+    if (!db) { console.warn("[Migrations] No DB connection, skipping"); return; }
+    await migrate(db, { migrationsFolder: "drizzle" });
+    console.log("[Migrations] Done");
+  } catch (e) {
+    console.error("[Migrations] Failed (server will still start):", e);
+  }
 }
 
 async function startServer() {
