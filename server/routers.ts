@@ -7,8 +7,17 @@ import Stripe from "stripe";
 import { creditPackages, getCreditPackage } from "./stripe-products";
 import { aiGatewayRouter } from "./ai-gateway-routers";
 import { picoToUsdString } from "./billing/billing";
+import { sdk } from "./_core/sdk";
+import { getSessionCookieOptions } from "./_core/cookies";
+import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
+import { hashPassword, verifyPassword, createPasswordUser } from "./auth-local";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+const num = (s: unknown) => Number(s ?? 0);
+const requireAdmin = (ctx: any) => {
+  if (ctx.user.role !== "admin")
+    throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+};
 
 export const appRouter = router({
   system: systemRouter,
@@ -17,13 +26,50 @@ export const appRouter = router({
     me: publicProcedure.query((opts) => {
       const u = opts.ctx.user;
       if (!u) return null;
-      // balancePico is a BigInt; the client runs JSON.stringify on this object,
-      // which throws on BigInt. Return it as a string.
       return { ...u, balancePico: (u.balancePico ?? 0n).toString() };
     }),
+
+    // Email/password sign-up. Issues the same signed session cookie the app
+    // already verifies locally — no Manus / OAuth server involved.
+    register: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+          password: z.string().min(8, "Password must be at least 8 characters"),
+          name: z.string().max(120).optional(),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const email = input.email.toLowerCase();
+        const openId = `local:${email}`;
+        const existing = await db.getUserByOpenId(openId);
+        if (existing)
+          throw new TRPCError({ code: "CONFLICT", message: "An account with this email already exists" });
+
+        const name = input.name?.trim() || email.split("@")[0];
+        await createPasswordUser({ openId, email, name, passwordHash: hashPassword(input.password) });
+
+        const token = await sdk.createSessionToken(openId, { name, expiresInMs: ONE_YEAR_MS });
+        ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
+        return { success: true } as const;
+      }),
+
+    login: publicProcedure
+      .input(z.object({ email: z.string().email(), password: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const email = input.email.toLowerCase();
+        const openId = `local:${email}`;
+        const user = await db.getUserByOpenId(openId);
+        if (!user || !verifyPassword(input.password, user.passwordHash)) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
+        }
+        const name = user.name || email.split("@")[0];
+        const token = await sdk.createSessionToken(openId, { name, expiresInMs: ONE_YEAR_MS });
+        ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
+        return { success: true } as const;
+      }),
+
     logout: publicProcedure.mutation(({ ctx }) => {
-      const { getSessionCookieOptions } = require("./_core/cookies");
-      const { COOKIE_NAME } = require("../shared/const");
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
@@ -34,20 +80,23 @@ export const appRouter = router({
     getBalance: protectedProcedure.query(async ({ ctx }) => {
       const user = await db.getUserById(ctx.user.id);
       const pico = user?.balancePico ?? 0n;
-      return { balanceUsd: picoToUsdString(pico), balancePico: pico.toString() };
+      const usd = picoToUsdString(pico);
+      return { balance: usd, balanceUsd: usd, balancePico: pico.toString() };
     }),
 
     getUsageStats: protectedProcedure.query(async ({ ctx }) => {
       const logs = await db.getUsageLogsByUserId(ctx.user.id, 1000);
-      const num = (s: string) => Number(s);
-      const byService: Record<string, number> = {};
+      const byMap: Record<string, number> = {};
       logs.forEach((l) => {
-        byService[l.service] = (byService[l.service] || 0) + num(l.chargedUsd);
+        byMap[l.service] = (byMap[l.service] || 0) + num(l.chargedUsd);
       });
+      const totalCharged = logs.reduce((s, l) => s + num(l.chargedUsd), 0);
       return {
-        totalChargedUsd: logs.reduce((s, l) => s + num(l.chargedUsd), 0).toFixed(6),
-        byService: Object.entries(byService).map(([provider, amount]) => ({
+        totalUsed: totalCharged.toFixed(6),
+        totalChargedUsd: totalCharged.toFixed(6),
+        byService: Object.entries(byMap).map(([provider, amount]) => ({
           provider,
+          amount: amount.toFixed(6),
           amountUsd: amount.toFixed(6),
         })),
       };
@@ -57,13 +106,12 @@ export const appRouter = router({
   apiKeys: router({
     list: protectedProcedure.query(async ({ ctx }) => db.getApiKeysByUserId(ctx.user.id)),
 
-    // Returns the plaintext key ONCE. It is hashed at rest and can't be retrieved again.
     generate: protectedProcedure
       .input(z.object({ name: z.string().min(1).max(255) }))
       .mutation(async ({ ctx, input }) => {
         const created = await db.createApiKey(ctx.user.id, input.name);
         return {
-          key: created.rawKey, // show once
+          key: created.rawKey,
           keyPrefix: created.keyPrefix,
           last4: created.last4,
           name: created.name,
@@ -74,7 +122,7 @@ export const appRouter = router({
     revoke: protectedProcedure
       .input(z.object({ keyId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        await db.revokeApiKey(ctx.user.id, input.keyId); // owner-scoped
+        await db.revokeApiKey(ctx.user.id, input.keyId);
         return { success: true };
       }),
   }),
@@ -83,14 +131,20 @@ export const appRouter = router({
 
   payments: router({
     getPackages: publicProcedure.query(() =>
-      creditPackages.map((p) => ({
-        id: p.id,
-        name: p.name,
-        priceUsd: p.priceUsd,
-        grantUsd: p.grantUsd,
-        bonusPct: +(((p.grantUsd - p.priceUsd) / p.priceUsd) * 100).toFixed(1),
-        description: p.description,
-      })),
+      creditPackages.map((p) => {
+        const bonusPct = +(((p.grantUsd - p.priceUsd) / p.priceUsd) * 100).toFixed(1);
+        return {
+          id: p.id,
+          name: p.name,
+          priceUsd: p.priceUsd,
+          grantUsd: p.grantUsd,
+          bonusPct,
+          description: p.description,
+          price: p.priceUsd,
+          tokens: p.grantUsd,
+          pricePerToken: bonusPct > 0 ? `+${bonusPct}% bonus` : "no bonus",
+        };
+      }),
     ),
 
     createCheckoutSession: protectedProcedure
@@ -116,10 +170,9 @@ export const appRouter = router({
           ],
           mode: "payment",
           success_url: `${ctx.req.headers.origin}/dashboard?payment=success`,
-          cancel_url: `${ctx.req.headers.origin}/buy-credits?payment=cancelled`,
+          cancel_url: `${ctx.req.headers.origin}/buy-tokens?payment=cancelled`,
           customer_email: ctx.user.email || undefined,
           client_reference_id: ctx.user.id.toString(),
-          // The webhook reads grant_usd to know how much credit to add.
           metadata: {
             user_id: ctx.user.id.toString(),
             package_id: pkg.id,
@@ -132,29 +185,76 @@ export const appRouter = router({
   }),
 
   admin: router({
-    getRevenueMetrics: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role !== "admin")
-        throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+    getAllUsers: protectedProcedure.query(async ({ ctx }) => {
+      requireAdmin(ctx);
+      const us = await db.getAllUsers(10000);
+      return us.map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        createdAt: u.createdAt,
+        tokenBalance: picoToUsdString(u.balancePico),
+      }));
+    }),
 
+    getRevenueStats: protectedProcedure.query(async ({ ctx }) => {
+      requireAdmin(ctx);
       const txs = await db.getAllTransactions(100000);
-      const num = (s: string) => Number(s);
       const purchases = txs.filter((t) => t.type === "purchase");
-      const usage = txs.filter((t) => t.type === "usage");
+      const totalRevenue = purchases.reduce((s, t) => s + num(t.amountUsd), 0);
+      const totalTransactions = purchases.length;
+      const averageTransaction = totalTransactions ? totalRevenue / totalTransactions : 0;
+      const largestTransaction = purchases.length
+        ? Math.max(...purchases.map((t) => num(t.amountUsd)))
+        : 0;
+      const counts: Record<string, number> = {};
+      purchases.forEach((t) => {
+        try {
+          const m = typeof t.metadata === "string" ? JSON.parse(t.metadata) : (t.metadata as any);
+          const pid = m?.packageId;
+          if (pid) counts[pid] = (counts[pid] || 0) + 1;
+        } catch {
+          /* ignore */
+        }
+      });
+      const topPackages = Object.entries(counts)
+        .map(([id, count]) => ({ packageName: getCreditPackage(id)?.name || id, count }))
+        .sort((a, b) => b.count - a.count);
+      return { totalRevenue, totalTransactions, averageTransaction, largestTransaction, topPackages };
+    }),
 
-      const revenue = purchases.reduce((s, t) => s + num(t.amountUsd), 0); // cash collected
-      const charged = usage.reduce((s, t) => s + num(t.amountUsd), 0); // credit consumed
-      const providerCost = usage.reduce((s, t) => s + num(t.costUsd || "0"), 0); // real cost
-      const grossProfit = charged - providerCost;
-
-      const users = await db.getAllUsers(100000);
+    getPlatformStats: protectedProcedure.query(async ({ ctx }) => {
+      requireAdmin(ctx);
+      const us = await db.getAllUsers(10000);
+      const txs = await db.getAllTransactions(100000);
+      const usageTx = txs.filter((t) => t.type === "usage");
+      const month = 30 * 24 * 60 * 60 * 1000;
       return {
-        cashCollectedUsd: revenue.toFixed(2),
+        totalUsers: us.length,
+        activeUsers: us.filter(
+          (u) => u.lastSignedIn && new Date(u.lastSignedIn).getTime() > Date.now() - month,
+        ).length,
+        totalTokensSold: txs.filter((t) => t.type === "purchase").reduce((s, t) => s + num(t.amountUsd), 0),
+        totalTokensUsed: usageTx.reduce((s, t) => s + num(t.amountUsd), 0),
+        averageUserBalance: us.length
+          ? us.reduce((s, u) => s + num(picoToUsdString(u.balancePico)), 0) / us.length
+          : 0,
+        totalAPIcalls: usageTx.length,
+      };
+    }),
+
+    getRevenueMetrics: protectedProcedure.query(async ({ ctx }) => {
+      requireAdmin(ctx);
+      const txs = await db.getAllTransactions(100000);
+      const usage = txs.filter((t) => t.type === "usage");
+      const charged = usage.reduce((s, t) => s + num(t.amountUsd), 0);
+      const cost = usage.reduce((s, t) => s + num(t.costUsd), 0);
+      return {
         creditConsumedUsd: charged.toFixed(6),
-        providerCostUsd: providerCost.toFixed(6),
-        grossProfitUsd: grossProfit.toFixed(6),
-        grossMarginPct: charged > 0 ? +((grossProfit / charged) * 100).toFixed(1) : 0,
-        totalUsers: users.length,
-        totalTransactions: txs.length,
+        providerCostUsd: cost.toFixed(6),
+        grossProfitUsd: (charged - cost).toFixed(6),
+        grossMarginPct: charged > 0 ? +(((charged - cost) / charged) * 100).toFixed(1) : 0,
       };
     }),
   }),
