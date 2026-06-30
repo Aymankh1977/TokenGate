@@ -5,6 +5,7 @@ import * as db from "./db";
 import { executeGatewayCall, GatewayError } from "./ai-gateway";
 import { SUPPORTED_PROVIDERS } from "./providers";
 import { picoToUsdString } from "./billing/billing";
+import { MODEL_SEED } from "./billing/seedModelPricing";
 
 /**
  * tRPC gateway = the dashboard "try it" surface (session-authenticated).
@@ -55,7 +56,12 @@ export const aiGatewayRouter = router({
   // Display catalog comes straight from the seeded pricing table now,
   // so the prices shown always match what the gateway actually charges.
   getModels: protectedProcedure.query(async () => {
-    return { providers: SUPPORTED_PROVIDERS };
+    const models = MODEL_SEED.map((m) => ({
+      id: m.model,
+      name: m.model,
+      provider: m.service,
+    }));
+    return { providers: SUPPORTED_PROVIDERS, models };
   }),
 });
 

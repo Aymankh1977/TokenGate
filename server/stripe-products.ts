@@ -10,15 +10,17 @@ export interface CreditPackage {
   id: string;
   name: string;
   priceUsd: number; // what the customer pays
-  grantUsd: number; // prepaid credit they receive
+  grantUsd: number; // prepaid credit they receive (1 token = $0.01)
+  tokens: number; // marketing token count = grantUsd / 0.01
   description: string;
 }
 
+// 1 token = $0.01 of prepaid credit. Larger tiers cost less per token.
 export const creditPackages: CreditPackage[] = [
-  { id: "starter", name: "Starter", priceUsd: 10, grantUsd: 10, description: "Try it out — no bonus" },
-  { id: "growth", name: "Growth", priceUsd: 50, grantUsd: 52.5, description: "+5% bonus credit" },
-  { id: "professional", name: "Professional", priceUsd: 200, grantUsd: 216, description: "+8% bonus credit" },
-  { id: "enterprise", name: "Enterprise", priceUsd: 1000, grantUsd: 1120, description: "+12% bonus credit" },
+  { id: "starter", name: "Starter", priceUsd: 100, grantUsd: 100, tokens: 10_000, description: "$0.01 per token" },
+  { id: "growth", name: "Growth", priceUsd: 180, grantUsd: 200, tokens: 20_000, description: "$0.009 per token — 10% off" },
+  { id: "professional", name: "Professional", priceUsd: 400, grantUsd: 500, tokens: 50_000, description: "$0.008 per token — 20% off" },
+  { id: "enterprise", name: "Enterprise", priceUsd: 700, grantUsd: 1000, tokens: 100_000, description: "$0.007 per token — 30% off" },
 ];
 
 export function getCreditPackage(id: string): CreditPackage | undefined {

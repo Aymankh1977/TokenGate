@@ -124,7 +124,7 @@ export default function APIGateway() {
                       </SelectTrigger>
                       <SelectContent>
                         {models?.models
-                          .filter(m => m.provider === provider)
+                          ?.filter(m => m.provider === provider)
                           .map(m => (
                             <SelectItem key={m.id} value={m.id}>
                               {m.name}

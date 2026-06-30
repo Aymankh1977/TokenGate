@@ -225,7 +225,7 @@ class SDKServer {
 
       return {
         openId,
-        appId,
+        appId: isNonEmptyString(appId) ? appId : ENV.appId,
         name,
       };
     } catch (error) {

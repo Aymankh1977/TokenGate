@@ -114,8 +114,10 @@ export default function Dashboard() {
                       <Skeleton className="h-8 w-16" />
                     ) : (
                       <>
-                        <div className="text-3xl font-bold">{statsData?.totalUsed || "0"}</div>
-                        <p className="text-sm text-muted-foreground mt-2">tokens used</p>
+                        <div className="text-3xl font-bold">
+                          ${Number(statsData?.totalUsed ?? 0).toFixed(2)}
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-2">in API usage</p>
                       </>
                     )}
                   </CardContent>
@@ -129,8 +131,10 @@ export default function Dashboard() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold">$24.50</div>
-                    <p className="text-sm text-muted-foreground mt-2">this month</p>
+                    <div className="text-3xl font-bold">
+                      ${Number(statsData?.totalChargedUsd ?? statsData?.totalUsed ?? 0).toFixed(2)}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2">all time</p>
                   </CardContent>
                 </Card>
               </div>

@@ -133,6 +133,7 @@ export const appRouter = router({
     getPackages: publicProcedure.query(() =>
       creditPackages.map((p) => {
         const bonusPct = +(((p.grantUsd - p.priceUsd) / p.priceUsd) * 100).toFixed(1);
+        const pricePerToken = p.priceUsd / p.tokens;
         return {
           id: p.id,
           name: p.name,
@@ -141,8 +142,8 @@ export const appRouter = router({
           bonusPct,
           description: p.description,
           price: p.priceUsd,
-          tokens: p.grantUsd,
-          pricePerToken: bonusPct > 0 ? `+${bonusPct}% bonus` : "no bonus",
+          tokens: p.tokens,
+          pricePerToken: `$${pricePerToken.toFixed(3)}`,
         };
       }),
     ),

@@ -88,22 +88,22 @@ export default function BuyTokens() {
                   <CardHeader>
                     <CardTitle className="text-2xl">{pkg.name}</CardTitle>
                     <CardDescription>
-                      ${pkg.grantUsd.toFixed(2)} credit for ${pkg.price.toFixed(2)}
+                      {pkg.tokens.toLocaleString()} tokens for ${pkg.price.toFixed(2)}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col justify-between">
                     <div className="space-y-4 mb-6">
                       <div>
                         <div className="text-4xl font-bold text-accent mb-2">
-                          ${pkg.grantUsd.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          {pkg.tokens.toLocaleString()}
                         </div>
-                        <p className="text-sm text-muted-foreground">in API credit</p>
+                        <p className="text-sm text-muted-foreground">tokens</p>
                       </div>
 
                       <div className="bg-muted/50 rounded-lg p-4">
                         <div className="text-2xl font-bold">${pkg.price.toFixed(2)}</div>
                         <p className="text-sm text-muted-foreground">
-                          {pkg.bonusPct > 0 ? `+${pkg.bonusPct}% bonus credit` : "no bonus"}
+                          {pkg.pricePerToken} per token
                         </p>
                       </div>
 
