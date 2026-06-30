@@ -6,28 +6,7 @@
       "idx": 0,
       "version": "5",
       "when": 1782253956953,
-      "tag": "0000_natural_luckman",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1782320087674,
-      "tag": "0001_military_speedball",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1782320087675,
-      "tag": "0002_credits_fix",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1782320087676,
-      "tag": "0003_add_password_hash",
+      "tag": "0000_init",
       "breakpoints": true
     }
   ]
