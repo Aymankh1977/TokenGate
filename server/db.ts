@@ -18,9 +18,15 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      const url = process.env.DATABASE_URL;
+      const masked = url.replace(/:([^:@]+)@/, ":***@");
+      console.log("[Database] Connecting to:", masked);
+      _db = drizzle(url);
+      // Test the connection immediately
+      await (_db as any).execute(sql`SELECT 1`);
+      console.log("[Database] Connected successfully");
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
+      console.error("[Database] Connection failed:", error);
       _db = null;
     }
   }
