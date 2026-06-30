@@ -15,6 +15,20 @@
       "when": 1782320087674,
       "tag": "0001_military_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1782320087675,
+      "tag": "0002_credits_fix",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1782320087676,
+      "tag": "0003_add_password_hash",
+      "breakpoints": true
     }
   ]
 }

@@ -21,6 +21,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
+  passwordHash: varchar("passwordHash", { length: 255 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   // Prepaid balance in pico-USD (1 USD = 1e12). Integer => no float drift.
   balancePico: bigint("balancePico", { mode: "bigint" }).default(sql`0`).notNull(),
