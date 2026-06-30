@@ -7,6 +7,8 @@ import Stripe from "stripe";
 import { creditPackages, getCreditPackage } from "./stripe-products";
 import { aiGatewayRouter } from "./ai-gateway-routers";
 import { picoToUsdString } from "./billing/billing";
+import { hashPassword, verifyPassword, createPasswordUser } from "./auth-local";
+import crypto from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
@@ -28,6 +30,84 @@ export const appRouter = router({
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
+
+    login: publicProcedure
+      .input(z.object({ email: z.string().email(), password: z.string().min(1) }))
+      .mutation(async ({ ctx, input }) => {
+        const { getSessionCookieOptions } = require("./_core/cookies");
+        const { COOKIE_NAME, ONE_YEAR_MS } = require("../shared/const");
+        const { sdk } = require("./_core/sdk");
+
+        const user = await db.getUserByEmail(input.email);
+        if (!user || !verifyPassword(input.password, user.passwordHash)) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Invalid email or password",
+          });
+        }
+
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || "",
+          expiresInMs: ONE_YEAR_MS,
+        });
+
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+
+        const { passwordHash: _omit, ...safeUser } = user;
+        return { ...safeUser, balancePico: (safeUser.balancePico ?? 0n).toString() };
+      }),
+
+    register: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+          password: z.string().min(8),
+          name: z.string().min(1).max(255),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const { getSessionCookieOptions } = require("./_core/cookies");
+        const { COOKIE_NAME, ONE_YEAR_MS } = require("../shared/const");
+        const { sdk } = require("./_core/sdk");
+
+        const existing = await db.getUserByEmail(input.email);
+        if (existing) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "An account with this email already exists",
+          });
+        }
+
+        const openId = `local:${crypto.randomBytes(16).toString("hex")}`;
+        const passwordHash = hashPassword(input.password);
+
+        await createPasswordUser({
+          openId,
+          email: input.email,
+          name: input.name,
+          passwordHash,
+        });
+
+        const user = await db.getUserByEmail(input.email);
+        if (!user) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create user",
+          });
+        }
+
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || "",
+          expiresInMs: ONE_YEAR_MS,
+        });
+
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+
+        const { passwordHash: _omit, ...safeUser } = user;
+        return { ...safeUser, balancePico: (safeUser.balancePico ?? 0n).toString() };
+      }),
   }),
 
   wallet: router({
