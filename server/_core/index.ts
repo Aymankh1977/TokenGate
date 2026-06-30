@@ -109,18 +109,31 @@ async function runMigrations() {
         \`processedAt\` timestamp NOT NULL DEFAULT (now()),
         CONSTRAINT \`processedStripeEvents_eventId\` PRIMARY KEY(\`eventId\`)
       )`,
-      `ALTER TABLE \`users\` ADD COLUMN IF NOT EXISTS \`passwordHash\` varchar(255) NULL`,
-      `ALTER TABLE \`users\` ADD COLUMN IF NOT EXISTS \`balancePico\` bigint NOT NULL DEFAULT 0`,
-      `ALTER TABLE \`transactions\` ADD COLUMN IF NOT EXISTS \`amountUsd\` varchar(32) NOT NULL DEFAULT '0'`,
-      `ALTER TABLE \`transactions\` ADD COLUMN IF NOT EXISTS \`costUsd\` varchar(32) NULL`,
-      `ALTER TABLE \`apiKeys\` ADD COLUMN IF NOT EXISTS \`last4\` varchar(8) NOT NULL DEFAULT ''`,
-      `ALTER TABLE \`usageLogs\` ADD COLUMN IF NOT EXISTS \`chargedUsd\` varchar(32) NOT NULL DEFAULT '0'`,
-      `ALTER TABLE \`usageLogs\` ADD COLUMN IF NOT EXISTS \`costUsd\` varchar(32) NOT NULL DEFAULT '0'`,
-      `ALTER TABLE \`modelPricing\` ADD COLUMN IF NOT EXISTS \`inputPicoPerToken\` bigint NOT NULL DEFAULT 0`,
-      `ALTER TABLE \`modelPricing\` ADD COLUMN IF NOT EXISTS \`outputPicoPerToken\` bigint NOT NULL DEFAULT 0`,
     ];
     for (const stmt of stmts) {
       await db.execute(sql.raw(stmt));
+    }
+    // Add columns that may be missing (safe check via information_schema)
+    const colsToAdd: { table: string; column: string; definition: string }[] = [
+      { table: "users", column: "passwordHash", definition: "varchar(255) NULL" },
+      { table: "users", column: "balancePico", definition: "bigint NOT NULL DEFAULT 0" },
+      { table: "transactions", column: "amountUsd", definition: "varchar(32) NOT NULL DEFAULT '0'" },
+      { table: "transactions", column: "costUsd", definition: "varchar(32) NULL" },
+      { table: "apiKeys", column: "last4", definition: "varchar(8) NOT NULL DEFAULT ''" },
+      { table: "usageLogs", column: "chargedUsd", definition: "varchar(32) NOT NULL DEFAULT '0'" },
+      { table: "usageLogs", column: "costUsd", definition: "varchar(32) NOT NULL DEFAULT '0'" },
+      { table: "modelPricing", column: "inputPicoPerToken", definition: "bigint NOT NULL DEFAULT 0" },
+      { table: "modelPricing", column: "outputPicoPerToken", definition: "bigint NOT NULL DEFAULT 0" },
+    ];
+    const dbName = process.env.DATABASE_URL?.split("/").pop()?.split("?")[0] ?? "railway";
+    for (const { table, column, definition } of colsToAdd) {
+      const rows = await db.execute(sql.raw(
+        `SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='${dbName}' AND TABLE_NAME='${table}' AND COLUMN_NAME='${column}'`
+      ));
+      const exists = Array.isArray(rows) && (rows[0] as any[]).length > 0;
+      if (!exists) {
+        await db.execute(sql.raw(`ALTER TABLE \`${table}\` ADD COLUMN \`${column}\` ${definition}`));
+      }
     }
     console.log("[Migrations] Done");
   } catch (e) {
